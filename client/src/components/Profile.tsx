@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { API_BASE_URL } from '../config';
-import { PaywallApp } from './PaywallApp';
-import { Providers } from './Providers';
+import { MultiNetworkPaywallApp } from './MultiNetworkPaywallApp';
+import { MultiNetworkProviders } from './MultiNetworkProviders';
 
 // Type definitions
 interface FormData {
@@ -93,6 +93,7 @@ const Profile: React.FC = () => {
           amount: amount,
           paymentRequirements: data.accepts,
           currentUrl: `${API_BASE_URL}/${amount}-dollar`,
+          solanaUrl: `${API_BASE_URL}/solana/${amount}-dollar`,
           testnet: data.accepts[0].network === 'base-sepolia' ? true : false,
           appName: 'StreamLabs',
           appLogo: 'https://streamlabs.com/favicon.ico',
@@ -271,14 +272,14 @@ const Profile: React.FC = () => {
               </div>
             </div>
           </div>
-          <Providers config={payWall}>
-            <PaywallApp 
+          <MultiNetworkProviders evmConfig={payWall}>
+            <MultiNetworkPaywallApp 
               config={payWall} 
               bodyData={formData}
               onPaymentComplete={handlePaymentComplete}
               onPaymentError={handlePaymentError}
             />
-          </Providers>
+          </MultiNetworkProviders>
         </div>
       )}
     </div>
