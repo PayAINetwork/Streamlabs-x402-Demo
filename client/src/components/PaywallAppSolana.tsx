@@ -10,6 +10,7 @@ import { getAssociatedTokenAddress, getAccount } from "@solana/spl-token";
 import { Spinner } from "./Spinner";
 import "./styles.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
+import "./PaywallAppSolana.css";
 
 // USDC Mint address for devnet
 const USDC_MINT_DEVNET = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
@@ -192,9 +193,9 @@ export function PaywallAppSolana({
   return (
     <div className="container gap-8">
       <div className="header">
-        <h1 className="title">Payment Required (Solana)</h1>
+        <h1 className="title">Payment Required</h1>
         <p>
-          To access this content, please pay ${amount} USDC on {networkName}.
+          To access this content, please pay ${amount} {networkName} USDC.
         </p>
         {config.testnet && (
           <p className="instructions">
@@ -211,7 +212,9 @@ export function PaywallAppSolana({
       </div>
 
       <div className="content w-full">
-        <WalletMultiButton className="w-full" />
+        <div className="wallet-connect-wrapper">
+          <WalletMultiButton />
+        </div>
 
         {connected && publicKey && (
           <div id="payment-section">
@@ -248,7 +251,7 @@ export function PaywallAppSolana({
 
             <div className="cta-container">
               <button
-                className="button button-primary"
+                className="button solana-pay-button"
                 onClick={handlePayment}
                 disabled={isPaying}
               >
