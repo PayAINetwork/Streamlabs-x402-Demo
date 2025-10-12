@@ -6,6 +6,7 @@ import { PaywallAppSolana } from "./PaywallAppSolana";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { ConnectWallet, Wallet } from "@coinbase/onchainkit/wallet";
 import "./styles.css";
+import "./PaywallAppSolana.css";
 
 type NetworkType = "evm" | "solana";
 
@@ -241,11 +242,11 @@ export function MultiNetworkPaywallApp({
           {!evmConnected && !solanaConnected && (
             <div className="flex flex-col gap-3 mb-6">
               {selectedNetwork === "solana" && solanaAvailable && (
-                <div className="w-full">
+                <div className="w-full wallet-connect-wrapper">
                   <p className="text-sm text-gray-600 mb-2">
                     Connect your Solana wallet (switch to {expectedNetwork}):
                   </p>
-                  <WalletMultiButton className="w-full" />
+                  <WalletMultiButton />
                 </div>
               )}
               {selectedNetwork === "evm" && evmAvailable && (

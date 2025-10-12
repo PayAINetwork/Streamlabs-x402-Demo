@@ -1,5 +1,6 @@
 /* Solana Wallet Button Custom Styling */
-.wallet-connect-wrapper .wallet-adapter-button {
+.wallet-connect-wrapper button.wallet-adapter-button,
+.wallet-connect-wrapper .wallet-adapter-button-trigger {
   background: linear-gradient(90deg, #9945FF 0%, #14F195 100%) !important;
   border: none !important;
   border-radius: 12px !important;
@@ -9,15 +10,18 @@
   width: 100% !important;
   justify-content: center !important;
   transition: all 0.3s ease !important;
+  color: white !important;
 }
 
-.wallet-connect-wrapper .wallet-adapter-button:hover:not([disabled]) {
+.wallet-connect-wrapper button.wallet-adapter-button:hover:not([disabled]),
+.wallet-connect-wrapper .wallet-adapter-button-trigger:hover:not([disabled]) {
   background: linear-gradient(90deg, #8533EE 0%, #12D084 100%) !important;
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 12px rgba(153, 69, 255, 0.3) !important;
 }
 
-.wallet-connect-wrapper .wallet-adapter-button[disabled] {
+.wallet-connect-wrapper button.wallet-adapter-button[disabled],
+.wallet-connect-wrapper .wallet-adapter-button-trigger[disabled] {
   opacity: 0.6 !important;
   cursor: not-allowed !important;
 }
