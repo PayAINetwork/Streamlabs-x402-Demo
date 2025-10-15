@@ -1,8 +1,7 @@
 import { config } from "dotenv";
 import express from "express";
 import axios from "axios";
-import { paymentMiddleware, Resource, Network } from "x402-express";
-import { X402PaymentHandler } from "@payai/x402-solana/server";
+import { paymentMiddleware, Resource, Network, type SolanaAddress } from "x402-express";
 import cors from "cors";
 config();
 
@@ -11,22 +10,12 @@ const payTo = process.env.ADDRESS as `0x${string}`;
 const network = process.env.NETWORK as Network;
 
 // Solana configuration
-const solanaTreasuryAddress = process.env.SOLANA_TREASURY_ADDRESS as string;
-const solanaFacilitatorUrl = process.env.SOLANA_FACILITATOR_URL || "https://facilitator.payai.network";
+const solanaTreasuryAddress = process.env.SOLANA_TREASURY_ADDRESS as SolanaAddress;
 
 if (!facilitatorUrl || !payTo) {
   console.error("Missing required environment variables");
   process.exit(1);
 }
-
-// Initialize Solana payment handler
-const solanaX402 = solanaTreasuryAddress
-  ? new X402PaymentHandler({
-      network: "solana-devnet",
-      treasuryAddress: solanaTreasuryAddress,
-      facilitatorUrl: solanaFacilitatorUrl,
-    })
-  : null;
 
 const app = express();
 
