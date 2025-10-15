@@ -183,117 +183,128 @@ try{
 }
 });
 
-// create streamlabs api call logic here
-
 // ========================================
 // Solana Payment Endpoints
 // ========================================
 
-if (solanaX402) {
-  // Helper function to create Solana payment requirements
-  const createSolanaPaymentRequirements = async (amount: number) => {
-    const usdcMintDevnet = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
-    const microAmount = (amount * 1_000_000).toString(); // Convert dollars to USDC micro-units
-    const baseUrl = process.env.BASE_URL || "http://localhost:4021";
-
-    return await solanaX402.createPaymentRequirements({
-      price: {
-        amount: microAmount,
-        asset: {
-          address: usdcMintDevnet,
-          decimals: 6, // USDC has 6 decimals
+if (solanaTreasuryAddress) {
+  app.use(
+    paymentMiddleware(
+      solanaTreasuryAddress,
+      {
+        "POST /solana/1-dollar": {
+          price: "$1",
+          network: "solana-devnet",
+        },
+        "POST /solana/5-dollar": {
+          price: "$5",
+          network: "solana-devnet",
+        },
+        "POST /solana/10-dollar": {
+          price: "$10",
+          network: "solana-devnet",
+        },
+        "POST /solana/20-dollar": {
+          price: "$20",
+          network: "solana-devnet",
+        },
+        "POST /solana/50-dollar": {
+          price: "$50",
+          network: "solana-devnet",
+        },
+        "POST /solana/100-dollar": {
+          price: "$100",
+          network: "solana-devnet",
         },
       },
-      network: "solana-devnet",
-      config: {
-        description: `$${amount} donation`,
-        resource: `${baseUrl}/solana/${amount}-dollar` as `${string}://${string}`,
+      {
+        url: facilitatorUrl,
       },
-    });
-  };
+    ),
+  );
 
-  // Solana payment endpoints
+  // Solana endpoint handlers
   app.post("/solana/1-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
     try {
-      const paymentHeader = solanaX402.extractPayment(req.headers);
-      const paymentRequirements = await createSolanaPaymentRequirements(1);
-
-      if (!paymentHeader) {
-        const response = solanaX402.create402Response(paymentRequirements);
-        return res.status(response.status).json(response.body);
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
       }
-
-      const verified = await solanaX402.verifyPayment(paymentHeader, paymentRequirements);
-      if (!verified) {
-        return res.status(402).json({ error: "Invalid payment" });
-      }
-
-      const { amount, name, identifier, message } = req.body;
-      if (amount && name) {
-        await makeStreamlabsApiCall(amount, name, identifier, message);
-      }
-
-      await solanaX402.settlePayment(paymentHeader, paymentRequirements);
-      return res.status(200).json({ message: "Payment successful" });
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
     } catch (error) {
-      console.error("Solana payment error:", error);
-      return res.status(500).json({ message: "An error occurred" });
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
     }
   });
 
   app.post("/solana/5-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
     try {
-      const paymentHeader = solanaX402.extractPayment(req.headers);
-      const paymentRequirements = await createSolanaPaymentRequirements(5);
-
-      if (!paymentHeader) {
-        const response = solanaX402.create402Response(paymentRequirements);
-        return res.status(response.status).json(response.body);
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
       }
-
-      const verified = await solanaX402.verifyPayment(paymentHeader, paymentRequirements);
-      if (!verified) {
-        return res.status(402).json({ error: "Invalid payment" });
-      }
-
-      const { amount, name, identifier, message } = req.body;
-      if (amount && name) {
-        await makeStreamlabsApiCall(amount, name, identifier, message);
-      }
-
-      await solanaX402.settlePayment(paymentHeader, paymentRequirements);
-      return res.status(200).json({ message: "Payment successful" });
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
     } catch (error) {
-      console.error("Solana payment error:", error);
-      return res.status(500).json({ message: "An error occurred" });
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
     }
   });
 
   app.post("/solana/10-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
     try {
-      const paymentHeader = solanaX402.extractPayment(req.headers);
-      const paymentRequirements = await createSolanaPaymentRequirements(10);
-
-      if (!paymentHeader) {
-        const response = solanaX402.create402Response(paymentRequirements);
-        return res.status(response.status).json(response.body);
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
       }
-
-      const verified = await solanaX402.verifyPayment(paymentHeader, paymentRequirements);
-      if (!verified) {
-        return res.status(402).json({ error: "Invalid payment" });
-      }
-
-      const { amount, name, identifier, message } = req.body;
-      if (amount && name) {
-        await makeStreamlabsApiCall(amount, name, identifier, message);
-      }
-
-      await solanaX402.settlePayment(paymentHeader, paymentRequirements);
-      return res.status(200).json({ message: "Payment successful" });
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
     } catch (error) {
-      console.error("Solana payment error:", error);
-      return res.status(500).json({ message: "An error occurred" });
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
+    }
+  });
+
+  app.post("/solana/20-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
+    try {
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
+      }
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
+    }
+  });
+
+  app.post("/solana/50-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
+    try {
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
+      }
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
+    }
+  });
+
+  app.post("/solana/100-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
+    try {
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
+      }
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
     }
   });
 
