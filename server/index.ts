@@ -11,6 +11,7 @@ const network = process.env.NETWORK as Network;
 
 // Solana configuration
 const solanaTreasuryAddress = process.env.SOLANA_TREASURY_ADDRESS as SolanaAddress;
+const solanaNetwork = (process.env.SOLANA_NETWORK || "solana-devnet") as Network;
 
 if (!facilitatorUrl || !payTo) {
   console.error("Missing required environment variables");
@@ -194,27 +195,27 @@ if (solanaTreasuryAddress) {
       {
         "POST /solana/1-dollar": {
           price: "$1",
-          network: "solana-devnet",
+          network: solanaNetwork,
         },
         "POST /solana/5-dollar": {
           price: "$5",
-          network: "solana-devnet",
+          network: solanaNetwork,
         },
         "POST /solana/10-dollar": {
           price: "$10",
-          network: "solana-devnet",
+          network: solanaNetwork,
         },
         "POST /solana/20-dollar": {
           price: "$20",
-          network: "solana-devnet",
+          network: solanaNetwork,
         },
         "POST /solana/50-dollar": {
           price: "$50",
-          network: "solana-devnet",
+          network: solanaNetwork,
         },
         "POST /solana/100-dollar": {
           price: "$100",
-          network: "solana-devnet",
+          network: solanaNetwork,
         },
       },
       {
