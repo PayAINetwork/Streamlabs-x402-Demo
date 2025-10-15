@@ -12,7 +12,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
-    "x402-express": "^0.5.3"
+    "x402-express": "^0.6.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.24.0",
