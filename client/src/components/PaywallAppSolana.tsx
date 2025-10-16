@@ -12,8 +12,9 @@ import "./styles.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import "./PaywallAppSolana.css";
 
-// USDC Mint address for devnet
+// USDC Mint addresses
 const USDC_MINT_DEVNET = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
+const USDC_MINT_MAINNET = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 
 // Type definitions for the paywall configuration
 interface PaywallConfig {
@@ -68,7 +69,8 @@ export function PaywallAppSolana({
     }
 
     try {
-      const usdcMint = new PublicKey(USDC_MINT_DEVNET);
+      const usdcMintAddress = config.testnet ? USDC_MINT_DEVNET : USDC_MINT_MAINNET;
+      const usdcMint = new PublicKey(usdcMintAddress);
       const tokenAddress = await getAssociatedTokenAddress(usdcMint, publicKey);
 
       const tokenAccount = await getAccount(connection, tokenAddress);
