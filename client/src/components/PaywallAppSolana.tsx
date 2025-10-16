@@ -123,10 +123,11 @@ export function PaywallAppSolana({
         signTransaction: signTransaction,
       };
 
-      // Create x402 client
+      // Create x402 client with the same RPC endpoint (Helius)
       const client = createX402Client({
         wallet: walletAdapter,
         network: network as "solana" | "solana-devnet",
+        rpcUrl: connection.rpcEndpoint, // Use the same RPC endpoint
         maxPaymentAmount: BigInt(100_000_000), // Max 100 USDC
       });
 
@@ -190,6 +191,7 @@ export function PaywallAppSolana({
     handleSuccessfulResponse,
     onPaymentError,
     checkUSDCBalance,
+    connection,
   ]);
 
   if (!config) {
