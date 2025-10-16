@@ -27,7 +27,7 @@ export function SolanaProviders({
   // RPC endpoint - using Helius for reliable mainnet access
   const endpoint = useMemo(() => {
     if (network === WalletAdapterNetwork.Mainnet) {
-      const heliusKey = import.meta.env.VITE_HELIUS_API_KEY;
+      const heliusKey = process.env.REACT_APP_HELIUS_API_KEY;
       if (heliusKey) {
         return `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`;
       }
