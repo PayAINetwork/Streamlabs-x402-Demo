@@ -12,7 +12,8 @@ type NetworkType = "evm" | "solana";
 
 interface MultiNetworkPaywallConfig {
   amount: number;
-  testnet: boolean;
+  testnet: boolean; // For EVM network
+  solanaTestnet?: boolean; // For Solana network (defaults to testnet if not provided)
   appName?: string;
   appLogo?: string;
 
@@ -71,8 +72,9 @@ export function MultiNetworkPaywallApp({
         const isDevnet = genesisHash === devnetHash;
         const isMainnet = genesisHash === mainnetHash;
 
-        // Check if network matches config
-        if (config.testnet) {
+        // Check if network matches config (use solanaTestnet if provided, otherwise fall back to testnet)
+        const expectedSolanaTestnet = config.solanaTestnet !== undefined ? config.solanaTestnet : config.testnet;
+        if (expectedSolanaTestnet) {
           setSolanaNetworkCorrect(isDevnet);
         } else {
           setSolanaNetworkCorrect(isMainnet);
@@ -104,7 +106,8 @@ export function MultiNetworkPaywallApp({
   const showNetworkSelector =
     (evmConnected && solanaConnected) || (!evmConnected && !solanaConnected);
 
-  const expectedNetwork = config.testnet ? "Devnet" : "Mainnet";
+  const expectedSolanaTestnet = config.solanaTestnet !== undefined ? config.solanaTestnet : config.testnet;
+  const expectedNetwork = expectedSolanaTestnet ? "Devnet" : "Mainnet";
 
   // Render the appropriate paywall based on selected network and wallet connection
   const renderPaywall = () => {
@@ -156,7 +159,7 @@ export function MultiNetworkPaywallApp({
 
       const solanaConfig = {
         amount: config.amount,
-        testnet: config.testnet,
+        testnet: config.solanaTestnet !== undefined ? config.solanaTestnet : config.testnet,
         currentUrl: config.solanaUrl!,
         appName: config.appName,
         appLogo: config.appLogo,

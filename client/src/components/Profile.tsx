@@ -89,12 +89,34 @@ const Profile: React.FC = () => {
         
         const data: ServerResponse = await response.json();
         
+        // Determine EVM testnet from network
+        const evmTestnet = data.accepts[0].network === 'base-sepolia';
+        
+        // Fetch Solana endpoint to determine its network
+        const solanaResponse = await fetch(`${API_BASE_URL}/solana/${amount}-dollar`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formDataCollected),
+        });
+        
+        let solanaTestnet = true; // Default to devnet
+        if (solanaResponse.status === 402) {
+          const solanaData = await solanaResponse.json();
+          // Check the actual Solana network from server response
+          if (solanaData.accepts && solanaData.accepts.length > 0) {
+            solanaTestnet = solanaData.accepts[0].network === 'solana-devnet';
+          }
+        }
+        
         const payWallValue = ({
           amount: amount,
           paymentRequirements: data.accepts,
           currentUrl: `${API_BASE_URL}/${amount}-dollar`,
           solanaUrl: `${API_BASE_URL}/solana/${amount}-dollar`,
-          testnet: data.accepts[0].network === 'base-sepolia' ? true : false,
+          testnet: evmTestnet,
+          solanaTestnet: solanaTestnet,
           appName: 'StreamLabs',
           appLogo: 'https://streamlabs.com/favicon.ico',
         });
