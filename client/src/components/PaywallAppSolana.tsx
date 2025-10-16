@@ -70,17 +70,24 @@ export function PaywallAppSolana({
 
     try {
       const usdcMintAddress = config.testnet ? USDC_MINT_DEVNET : USDC_MINT_MAINNET;
+      console.log("🔍 Network:", config.testnet ? "devnet" : "mainnet");
+      console.log("🔍 USDC mint:", usdcMintAddress);
+      console.log("🔍 Wallet:", publicKey.toBase58());
+      
       const usdcMint = new PublicKey(usdcMintAddress);
       const tokenAddress = await getAssociatedTokenAddress(usdcMint, publicKey);
+      console.log("🔍 Token account:", tokenAddress.toBase58());
 
       const tokenAccount = await getAccount(connection, tokenAddress);
       const balance = Number(tokenAccount.amount) / 1_000_000; // Convert from micro-units
+      console.log("🔍 Raw balance:", tokenAccount.amount.toString());
+      console.log("🔍 Formatted balance:", balance);
       setUsdcBalance(balance.toFixed(2));
     } catch (error) {
-      console.error("Error fetching USDC balance:", error);
+      console.error("❌ Error fetching USDC balance:", error);
       setUsdcBalance("0.00");
     }
-  }, [publicKey, connection]);
+  }, [publicKey, connection, config.testnet]);
 
   const handleSuccessfulResponse = useCallback(
     async (response: Response) => {
@@ -125,9 +132,13 @@ export function PaywallAppSolana({
 
       setStatus("Checking USDC balance...");
       const balance = parseFloat(usdcBalance);
+      console.log("💰 Payment check - Balance:", balance, "Required:", amount);
+      console.log("💰 Balance string:", usdcBalance);
+      console.log("💰 Network:", networkName);
+      
       if (balance === 0 || balance < amount) {
         throw new Error(
-          `Insufficient balance. You need at least $${amount} USDC on ${networkName}`
+          `Insufficient balance. You need at least $${amount} USDC on ${networkName}. Current balance: $${balance}`
         );
       }
 

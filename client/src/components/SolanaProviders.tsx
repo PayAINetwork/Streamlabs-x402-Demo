@@ -24,8 +24,16 @@ export function SolanaProviders({
   children,
   network = WalletAdapterNetwork.Devnet,
 }: SolanaProvidersProps) {
-  // RPC endpoint
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  // RPC endpoint - using Helius for reliable mainnet access
+  const endpoint = useMemo(() => {
+    if (network === WalletAdapterNetwork.Mainnet) {
+      const heliusKey = import.meta.env.VITE_HELIUS_API_KEY;
+      if (heliusKey) {
+        return `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`;
+      }
+    }
+    return clusterApiUrl(network);
+  }, [network]);
 
   // Wallet adapters
   const wallets = useMemo(
