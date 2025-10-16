@@ -2,6 +2,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { API_BASE_URL } from '../config';
 import { MultiNetworkPaywallApp } from './MultiNetworkPaywallApp';
 import { MultiNetworkProviders } from './MultiNetworkProviders';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 
 // Type definitions
 interface FormData {
@@ -294,7 +295,10 @@ const Profile: React.FC = () => {
               </div>
             </div>
           </div>
-          <MultiNetworkProviders evmConfig={payWall}>
+          <MultiNetworkProviders 
+            evmConfig={payWall}
+            solanaNetwork={payWall.solanaTestnet ? WalletAdapterNetwork.Devnet : WalletAdapterNetwork.Mainnet}
+          >
             <MultiNetworkPaywallApp 
               config={payWall} 
               bodyData={formData}
