@@ -1,64 +1,76 @@
-import React, { useState } from "react";
-import { PaywallAppSolana } from "./PaywallAppSolana";
-import { SolanaProviders } from "./SolanaProviders";
+import React, { useState, useMemo } from "react";
+import { X402Paywall } from "@payai/x402-solana-react";
+import { ConnectionProvider, WalletProvider, useWallet } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
+import { clusterApiUrl } from "@solana/web3.js";
 import { API_BASE_URL } from "../config";
+import "@payai/x402-solana-react/dist/style.css";
+import "@solana/wallet-adapter-react-ui/styles.css";
 
-export function SolanaPaywallDemo() {
-  const [payWall, setPayWall] = useState<any | null>(null);
+function PaywallContent() {
+  const { publicKey, signTransaction } = useWallet();
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [submitMessage, setSubmitMessage] = useState<string>("");
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const dollarAmounts: number[] = [1, 5, 10];
 
-  const handleSubmit = async (amount: number): Promise<void> => {
-    setIsSubmitting(true);
-    setSubmitMessage("");
+  const walletAdapter = useMemo(() => {
+    if (!publicKey || !signTransaction) return null;
+    return {
+      publicKey,
+      signTransaction,
+    };
+  }, [publicKey, signTransaction]);
 
-    try {
-      // For demo purposes, we'll create a mock paywall config
-      // In a real app, you'd fetch this from your server
-      const payWallValue = {
-        amount: amount,
-        currentUrl: `${API_BASE_URL}/solana/${amount}-dollar`,
-        testnet: true, // Always use devnet for testing
-        appName: "Solana x402 Demo",
-        appLogo: "https://solana.com/favicon.ico",
-      };
-
-      setPayWall(payWallValue);
-      console.log("payWall: ", payWallValue);
-    } catch (error) {
-      console.error("Error:", error);
-      setSubmitMessage("Error connecting to server. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handlePaymentComplete = (response: Response) => {
-    setSelectedAmount(null);
-    setPayWall(null);
-    setSubmitMessage("Payment successful! Thank you.");
-
-    setTimeout(() => {
-      setSubmitMessage("");
-    }, 5000);
-  };
-
-  const handlePaymentError = (error: Error) => {
-    setSubmitMessage(`Payment failed: ${error.message}`);
-  };
+  if (showPaywall && selectedAmount && walletAdapter) {
+    return (
+      <X402Paywall
+        amount={selectedAmount}
+        description="Premium Demo Content Access"
+        wallet={walletAdapter}
+        network="solana-devnet"
+        rpcUrl={clusterApiUrl(WalletAdapterNetwork.Devnet)}
+        showBalance={true}
+        showNetworkInfo={true}
+        onPaymentSuccess={(txId) => {
+          console.log('Payment successful!', txId);
+          setShowPaywall(false);
+          setSelectedAmount(null);
+        }}
+        onPaymentError={(error) => {
+          console.error('Payment failed:', error);
+          setShowPaywall(false);
+        }}
+      >
+        <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-white shadow-2xl rounded-3xl overflow-hidden">
+            <div className="text-center p-10">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                🎉 Payment Successful!
+              </h1>
+              <p className="text-lg text-slate-600 mt-4">
+                You've successfully unlocked exclusive content
+              </p>
+              <button
+                onClick={() => {
+                  setShowPaywall(false);
+                  setSelectedAmount(null);
+                }}
+                className="mt-6 bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all"
+              >
+                Back to Demo
+              </button>
+            </div>
+          </div>
+        </div>
+      </X402Paywall>
+    );
+  }
 
   return (
-    <div className="relative">
-      {/* Demo content */}
-      <div
-        className={`min-h-screen bg-gradient-to-br from-purple-500 via-pink-600 to-purple-700 p-5 ${
-          payWall ? "pointer-events-none" : ""
-        }`}
-      >
+    <div className="min-h-screen bg-gradient-to-br from-purple-500 via-pink-600 to-purple-700 p-5">
         <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
           <header
             className="text-white p-10 text-center relative"
@@ -128,70 +140,39 @@ export function SolanaPaywallDemo() {
               <div className="text-center">
                 <button
                   type="button"
-                  className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-10 py-4 rounded-full text-xl font-semibold shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
-                  onClick={() => handleSubmit(selectedAmount)}
-                  disabled={isSubmitting}
+                  className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-10 py-4 rounded-full text-xl font-semibold shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:-translate-y-1 transition-all duration-300"
+                  onClick={() => setShowPaywall(true)}
                 >
-                  {isSubmitting ? "Processing..." : `Pay $${selectedAmount}`}
+                  Pay ${selectedAmount}
                 </button>
-              </div>
-            )}
-
-            {submitMessage && (
-              <div
-                className={`mt-6 p-4 rounded-xl text-center font-medium ${
-                  submitMessage.includes("Error") || submitMessage.includes("failed")
-                    ? "bg-red-100 text-red-800 border border-red-200"
-                    : "bg-green-100 text-green-800 border border-green-200"
-                }`}
-              >
-                {submitMessage}
               </div>
             )}
           </div>
         </div>
       </div>
+  );
+}
 
-      {/* Paywall overlay */}
-      {payWall && (
-        <div className="fixed inset-0 bg-gradient-to-br from-purple-500/90 via-pink-600/90 to-purple-700/90 backdrop-blur-sm z-40">
-          <div className="bg-white shadow-sm border-b">
-            <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-              <button
-                onClick={() => setPayWall(null)}
-                className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                Back to Demo
-              </button>
-              <div className="text-sm text-gray-500">
-                Amount: ${selectedAmount}
-              </div>
-            </div>
-          </div>
-          <SolanaProviders network={WalletAdapterNetwork.Devnet}>
-            <PaywallAppSolana
-              config={payWall}
-              bodyData={{ amount: selectedAmount }}
-              onPaymentComplete={handlePaymentComplete}
-              onPaymentError={handlePaymentError}
-            />
-          </SolanaProviders>
-        </div>
-      )}
-    </div>
+export function SolanaPaywallDemo() {
+  const network = WalletAdapterNetwork.Devnet;
+  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+
+  const wallets = useMemo(
+    () => [
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter(),
+    ],
+    []
+  );
+
+  return (
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>
+          <PaywallContent />
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
   );
 }
 
