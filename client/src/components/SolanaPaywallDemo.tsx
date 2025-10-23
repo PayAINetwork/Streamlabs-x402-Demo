@@ -4,10 +4,12 @@ import { ConnectionProvider, WalletProvider, useWallet } from "@solana/wallet-ad
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
-import { clusterApiUrl } from "@solana/web3.js";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import "@payai/x402-solana-react/dist/style.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
+
+const HELIUS_API_KEY = process.env.REACT_APP_HELIUS_API_KEY;
+const HELIUS_RPC_URL = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`;
 
 function PaywallContent() {
   const { publicKey, signTransaction } = useWallet();
@@ -30,8 +32,8 @@ function PaywallContent() {
         amount={selectedAmount}
         description="Premium Demo Content Access"
         wallet={walletAdapter}
-        network="solana-devnet"
-        rpcUrl={clusterApiUrl(WalletAdapterNetwork.Devnet)}
+        network="solana"
+        rpcUrl={HELIUS_RPC_URL}
         showBalance={true}
         showNetworkInfo={true}
         onPaymentSuccess={(txId: string) => {
@@ -96,19 +98,9 @@ function PaywallContent() {
                 </h3>
                 <div className="text-left space-y-2 text-sm text-blue-800">
                   <p>1. Make sure you have a Solana wallet (Phantom/Solflare)</p>
-                  <p>2. Switch your wallet to Devnet</p>
-                  <p>
-                    3. Get Devnet USDC from{" "}
-                    <a
-                      href="https://faucet.circle.com/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline font-semibold"
-                    >
-                      Circle's faucet
-                    </a>
-                  </p>
-                  <p>4. Select an amount and proceed with payment</p>
+                  <p>2. Make sure you have USDC in your wallet</p>
+                  <p>3. Select an amount and proceed with payment</p>
+                  <p>4. Test payments are automatically refunded</p>
                 </div>
               </div>
             </div>
@@ -158,8 +150,7 @@ function PaywallContent() {
 }
 
 export function SolanaPaywallDemo() {
-  const network = WalletAdapterNetwork.Devnet;
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const endpoint = useMemo(() => HELIUS_RPC_URL, []);
 
   const wallets = useMemo(
     () => [
