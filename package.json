@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@payai/x402-solana-react": "^0.1.0-beta.1"
+    "@payai/x402-solana-react": "^0.1.0-beta.3"
   }
 }
