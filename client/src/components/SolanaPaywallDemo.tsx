@@ -5,6 +5,7 @@ import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import "@payai/x402-solana-react/dist/style.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
@@ -134,7 +135,12 @@ function PaywallContent() {
               </div>
             </div>
 
-            {selectedAmount && (
+            {!publicKey ? (
+              <div className="text-center">
+                <p className="text-gray-600 mb-4">Connect your wallet to continue</p>
+                <WalletMultiButton className="!bg-gradient-to-r !from-purple-500 !to-pink-600 !text-white !px-10 !py-4 !rounded-full !text-xl !font-semibold !shadow-lg !shadow-purple-500/30 hover:!shadow-xl hover:!shadow-purple-500/40 !transform hover:!-translate-y-1 !transition-all !duration-300 !border-0" />
+              </div>
+            ) : selectedAmount ? (
               <div className="text-center">
                 <button
                   type="button"
@@ -144,7 +150,7 @@ function PaywallContent() {
                   Pay ${selectedAmount}
                 </button>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
