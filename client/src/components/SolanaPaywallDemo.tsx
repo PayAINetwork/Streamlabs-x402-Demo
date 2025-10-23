@@ -5,7 +5,6 @@ import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
-import { API_BASE_URL } from "../config";
 import "@payai/x402-solana-react/dist/style.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
@@ -34,12 +33,12 @@ function PaywallContent() {
         rpcUrl={clusterApiUrl(WalletAdapterNetwork.Devnet)}
         showBalance={true}
         showNetworkInfo={true}
-        onPaymentSuccess={(txId) => {
+        onPaymentSuccess={(txId: string) => {
           console.log('Payment successful!', txId);
           setShowPaywall(false);
           setSelectedAmount(null);
         }}
-        onPaymentError={(error) => {
+        onPaymentError={(error: Error) => {
           console.error('Payment failed:', error);
           setShowPaywall(false);
         }}
@@ -128,7 +127,6 @@ function PaywallContent() {
                         : "bg-white text-gray-700 border-2 border-gray-200 hover:border-purple-400 hover:bg-purple-50"
                     }`}
                     onClick={() => setSelectedAmount(amount)}
-                    disabled={isSubmitting}
                   >
                     ${amount}
                   </button>
