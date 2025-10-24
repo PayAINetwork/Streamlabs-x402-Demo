@@ -1,7 +1,6 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { X402Paywall } from "@payai/x402-solana-react";
 import { ConnectionProvider, WalletProvider, useWallet } from "@solana/wallet-adapter-react";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
@@ -73,79 +72,78 @@ function PaywallContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 via-pink-600 to-purple-700 p-5">
-        <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
-          <header
-            className="text-white p-10 text-center relative"
-            style={{
-              background: "linear-gradient(to right, #9333ea, #db2777)",
-            }}
-          >
-            <div className="relative z-10">
-              <h1 className="text-4xl font-bold mb-3">
-                Solana x402 Payment Demo
-              </h1>
-              <p className="text-xl opacity-90">
-                Test the x402-solana payment integration
-              </p>
-            </div>
-          </header>
-
-          <div className="p-10">
-            <div className="mb-8 text-center">
-              <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
-                <h3 className="text-lg font-semibold text-blue-900 mb-3">
-                  🧪 Testing Instructions
-                </h3>
-                <div className="text-left space-y-2 text-sm text-blue-800">
-                  <p>1. Make sure you have a Solana wallet (Phantom/Solflare)</p>
-                  <p>2. Make sure you have USDC in your wallet</p>
-                  <p>3. Select an amount and proceed with payment</p>
-                  <p>4. Test payments are automatically refunded</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold text-gray-800 text-center mb-6">
-                Select Amount:
-              </h3>
-              <div className="grid grid-cols-3 gap-4">
-                {dollarAmounts.map((amount) => (
-                  <button
-                    key={amount}
-                    type="button"
-                    className={`py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
-                      selectedAmount === amount
-                        ? "bg-purple-600 text-white shadow-lg shadow-purple-500/50"
-                        : "bg-white text-gray-700 border-2 border-gray-200 hover:border-purple-400 hover:bg-purple-50"
-                    }`}
-                    onClick={() => setSelectedAmount(amount)}
-                  >
-                    ${amount}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {!publicKey ? (
-              <div className="text-center">
-                <p className="text-gray-600 mb-4">Connect your wallet to continue</p>
-                <WalletMultiButton className="!bg-gradient-to-r !from-purple-500 !to-pink-600 !text-white !px-10 !py-4 !rounded-full !text-xl !font-semibold !shadow-lg !shadow-purple-500/30 hover:!shadow-xl hover:!shadow-purple-500/40 !transform hover:!-translate-y-1 !transition-all !duration-300 !border-0" />
-              </div>
-            ) : selectedAmount ? (
-              <div className="text-center">
-                <button
-                  type="button"
-                  className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-10 py-4 rounded-full text-xl font-semibold shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:-translate-y-1 transition-all duration-300"
-                  onClick={() => setShowPaywall(true)}
-                >
-                  Pay ${selectedAmount}
-                </button>
-              </div>
-            ) : null}
+      <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <header
+          className="text-white p-10 text-center relative"
+          style={{
+            background: "linear-gradient(to right, #9333ea, #db2777)",
+          }}
+        >
+          <div className="relative z-10">
+            <h1 className="text-4xl font-bold mb-3">
+              Solana x402 Payment Demo
+            </h1>
+            <p className="text-xl opacity-90">
+              Test the x402-solana payment integration
+            </p>
           </div>
+        </header>
+
+        <div className="p-10">
+          <div className="mb-8 text-center">
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
+              <h3 className="text-lg font-semibold text-blue-900 mb-3">
+                🧪 Testing Instructions
+              </h3>
+              <div className="text-left space-y-2 text-sm text-blue-800">
+                <p>1. Make sure you have a Solana wallet (Phantom/Solflare)</p>
+                <p>2. Make sure you have USDC in your wallet</p>
+                <p>3. Select an amount and proceed with payment</p>
+                <p>4. Test payments are automatically refunded</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold text-gray-800 text-center mb-6">
+              Select Amount:
+            </h3>
+            <div className="grid grid-cols-3 gap-4">
+              {dollarAmounts.map((amount) => (
+                <button
+                  key={amount}
+                  type="button"
+                  className={`py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${selectedAmount === amount
+                    ? "bg-purple-600 text-white shadow-lg shadow-purple-500/50"
+                    : "bg-white text-gray-700 border-2 border-gray-200 hover:border-purple-400 hover:bg-purple-50"
+                    }`}
+                  onClick={() => setSelectedAmount(amount)}
+                >
+                  ${amount}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {!publicKey ? (
+            <div className="text-center">
+              <p className="text-gray-600 mb-4">Connect your wallet to continue</p>
+              <WalletMultiButton className="!bg-gradient-to-r !from-purple-500 !to-pink-600 !text-white !px-10 !py-4 !rounded-full !text-xl !font-semibold !shadow-lg !shadow-purple-500/30 hover:!shadow-xl hover:!shadow-purple-500/40 !transform hover:!-translate-y-1 !transition-all !duration-300 !border-0" />
+            </div>
+          ) : selectedAmount ? (
+            <div className="text-center">
+              <button
+                type="button"
+                className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-10 py-4 rounded-full text-xl font-semibold shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transform hover:-translate-y-1 transition-all duration-300"
+                onClick={() => setShowPaywall(true)}
+              >
+                Pay ${selectedAmount}
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
+    </div>
   );
 }
 

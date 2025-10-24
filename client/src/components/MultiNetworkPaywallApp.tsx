@@ -63,7 +63,7 @@ export function MultiNetworkPaywallApp({
 
       try {
         const genesisHash = await connection.getGenesisHash();
-        
+
         // Devnet genesis hash
         const devnetHash = "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG";
         // Mainnet genesis hash
@@ -86,7 +86,7 @@ export function MultiNetworkPaywallApp({
     };
 
     checkSolanaNetwork();
-  }, [solanaConnected, publicKey, connection, config.testnet]);
+  }, [solanaConnected, publicKey, connection, config.testnet, config.solanaTestnet]);
 
   // Auto-detect based on wallet connection
   useEffect(() => {
