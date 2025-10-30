@@ -4,14 +4,14 @@ import { ConnectionProvider, WalletProvider, useWallet } from "@solana/wallet-ad
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import "@payai/x402-solana-react/dist/style.css";
+import "@payai/x402-solana-react/styles";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
 const HELIUS_API_KEY = process.env.REACT_APP_HELIUS_API_KEY;
 const HELIUS_RPC_URL = `https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`;
 
 function PaywallContent() {
-  const { publicKey, signTransaction } = useWallet();
+  const { publicKey, signTransaction, disconnect } = useWallet();
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
 
@@ -35,6 +35,7 @@ function PaywallContent() {
         rpcUrl={HELIUS_RPC_URL}
         showBalance={true}
         showNetworkInfo={true}
+        onDisconnect={() => disconnect()}
         onPaymentSuccess={(txId: string) => {
           console.log('Payment successful!', txId);
           setShowPaywall(false);
