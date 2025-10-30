@@ -70,6 +70,7 @@ export function PaywallApp({ config, onPaymentComplete, onPaymentError, bodyData
       handleSwitchChain();
       checkUSDCBalance();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
 
   const publicClient = createPublicClient({
@@ -92,6 +93,7 @@ export function PaywallApp({ config, onPaymentComplete, onPaymentError, bodyData
       setIsCorrectChain(null);
       setStatus("");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paymentChain.id, connectedChainId, isConnected]);
 
   const checkUSDCBalance = useCallback(async () => {
@@ -237,6 +239,7 @@ export function PaywallApp({ config, onPaymentComplete, onPaymentError, bodyData
     } finally {
       setIsPaying(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, config, paymentRequirements, publicClient, paymentChain, handleSwitchChain, onPaymentError]);
 
   if (!config || !paymentRequirements) {

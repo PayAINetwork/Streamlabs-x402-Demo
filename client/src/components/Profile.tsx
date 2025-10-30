@@ -1,18 +1,14 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { API_BASE_URL } from '../config';
-import { PaywallApp } from './PaywallApp';
-import { Providers } from './Providers';
+import { MultiNetworkPaywallApp } from './MultiNetworkPaywallApp';
+import { MultiNetworkProviders } from './MultiNetworkProviders';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 
 // Type definitions
 interface FormData {
   name: string;
   email: string;
   message: string;
-}
-
-interface PaymentData {
-  type: string;
-  [key: string]: any;
 }
 
 interface ServerResponse {
@@ -94,11 +90,34 @@ const Profile: React.FC = () => {
         
         const data: ServerResponse = await response.json();
         
+        // Determine EVM testnet from network
+        const evmTestnet = data.accepts[0].network === 'base-sepolia';
+        
+        // Fetch Solana endpoint to determine its network
+        const solanaResponse = await fetch(`${API_BASE_URL}/solana/${amount}-dollar`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formDataCollected),
+        });
+        
+        let solanaTestnet = true; // Default to devnet
+        if (solanaResponse.status === 402) {
+          const solanaData = await solanaResponse.json();
+          // Check the actual Solana network from server response
+          if (solanaData.accepts && solanaData.accepts.length > 0) {
+            solanaTestnet = solanaData.accepts[0].network === 'solana-devnet';
+          }
+        }
+        
         const payWallValue = ({
           amount: amount,
           paymentRequirements: data.accepts,
           currentUrl: `${API_BASE_URL}/${amount}-dollar`,
-          testnet: data.accepts[0].network === 'base-sepolia' ? true : false,
+          solanaUrl: `${API_BASE_URL}/solana/${amount}-dollar`,
+          testnet: evmTestnet,
+          solanaTestnet: solanaTestnet,
           appName: 'StreamLabs',
           appLogo: 'https://streamlabs.com/favicon.ico',
         });
@@ -276,14 +295,17 @@ const Profile: React.FC = () => {
               </div>
             </div>
           </div>
-          <Providers config={payWall}>
-            <PaywallApp 
+          <MultiNetworkProviders 
+            evmConfig={payWall}
+            solanaNetwork={payWall.solanaTestnet ? WalletAdapterNetwork.Devnet : WalletAdapterNetwork.Mainnet}
+          >
+            <MultiNetworkPaywallApp 
               config={payWall} 
               bodyData={formData}
               onPaymentComplete={handlePaymentComplete}
               onPaymentError={handlePaymentError}
             />
-          </Providers>
+          </MultiNetworkProviders>
         </div>
       )}
     </div>

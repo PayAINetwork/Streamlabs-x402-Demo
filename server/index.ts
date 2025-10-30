@@ -1,13 +1,17 @@
 import { config } from "dotenv";
 import express from "express";
 import axios from "axios";
-import { paymentMiddleware, Resource, Network } from "x402-express";
+import { paymentMiddleware, Resource, Network, type SolanaAddress } from "x402-express";
 import cors from "cors";
 config();
 
 const facilitatorUrl = process.env.FACILITATOR_URL as Resource;
 const payTo = process.env.ADDRESS as `0x${string}`;
 const network = process.env.NETWORK as Network;
+
+// Solana configuration
+const solanaTreasuryAddress = process.env.SOLANA_TREASURY_ADDRESS as SolanaAddress;
+const solanaNetwork = (process.env.SOLANA_NETWORK || "solana-devnet") as Network;
 
 if (!facilitatorUrl || !payTo) {
   console.error("Missing required environment variables");
@@ -180,7 +184,135 @@ try{
 }
 });
 
-// create streamlabs api call logic here
+// ========================================
+// Solana Payment Endpoints
+// ========================================
+
+if (solanaTreasuryAddress) {
+  app.use(
+    paymentMiddleware(
+      solanaTreasuryAddress,
+      {
+        "POST /solana/1-dollar": {
+          price: "$1",
+          network: solanaNetwork,
+        },
+        "POST /solana/5-dollar": {
+          price: "$5",
+          network: solanaNetwork,
+        },
+        "POST /solana/10-dollar": {
+          price: "$10",
+          network: solanaNetwork,
+        },
+        "POST /solana/20-dollar": {
+          price: "$20",
+          network: solanaNetwork,
+        },
+        "POST /solana/50-dollar": {
+          price: "$50",
+          network: solanaNetwork,
+        },
+        "POST /solana/100-dollar": {
+          price: "$100",
+          network: solanaNetwork,
+        },
+      },
+      {
+        url: facilitatorUrl,
+      },
+    ),
+  );
+
+  // Solana endpoint handlers
+  app.post("/solana/1-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
+    try {
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
+      }
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
+    }
+  });
+
+  app.post("/solana/5-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
+    try {
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
+      }
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
+    }
+  });
+
+  app.post("/solana/10-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
+    try {
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
+      }
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
+    }
+  });
+
+  app.post("/solana/20-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
+    try {
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
+      }
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
+    }
+  });
+
+  app.post("/solana/50-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
+    try {
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
+      }
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
+    }
+  });
+
+  app.post("/solana/100-dollar", async (req, res) => {
+    const { amount, name, identifier, message } = req.body;
+    try {
+      if (!amount || !name) {
+        return res.status(400).send({message: "A donation amount and name are required"});
+      }
+      await makeStreamlabsApiCall(amount, name, identifier, message);
+      return res.status(200).send({message: "Donation successful"});
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({message: "An error occurred"});
+    }
+  });
+
+  console.log("✅ Solana payment endpoints enabled");
+} else {
+  console.log("⚠️  Solana payment endpoints disabled (SOLANA_TREASURY_ADDRESS not set)");
+}
 
 app.listen(4021, () => {
   console.log(`Server listening at http://localhost:${4021}`);

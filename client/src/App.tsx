@@ -1,6 +1,7 @@
 import React from 'react';
 import Profile from './components/Profile';
 import Landing from './components/Landing';
+import { SolanaPaywallDemo } from './components/SolanaPaywallDemo';
 
 const App: React.FC = () => {
   const path = typeof window !== 'undefined' ? window.location.pathname : '/';
@@ -17,6 +18,14 @@ const App: React.FC = () => {
     return (
       <div className="App">
         <Profile />
+      </div>
+    );
+  }
+
+  if (path === '/solana-demo') {
+    return (
+      <div className="App">
+        <SolanaPaywallDemo />
       </div>
     );
   }
